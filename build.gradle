@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+project.ext.archiveName = 'CountingAutoTyper'
+project.ext.mainClass = 'CountingAutoTyper'
+project.ext.date = new Date().format('YYMMdd-HHmmss').toString()
+
+dependencies {
+    compile group: 'com.miglayout', name: 'miglayout', version: '3.7.4'
+}
+
+jar {
+    manifest {
+        attributes(
+            "Main-Class": "${project.mainClass}",
+            "Version": "${project.version}",
+        )
+    }
+    from { configurations.compile.collect { it.isDirectory()?it:zipTree(it) } }
+    archiveName = "${project.archiveName}_${project.version}.jar"
+}
+
+build {
+    doLast {
+        println configurations.compile.collect()
+        copy {
+            from jar
+            into './bin'
+        }
+    }
+}
+
+clean {
+    delete "./build"
+}
